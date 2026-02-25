@@ -60,3 +60,6 @@ async def get_history(limit: int = 10):
 @app.get("/health")
 def health():
     return {"status": "ok", "message": "Career GPS Backend Running 🚀"}
+
+
+handler = Mangum(app)
