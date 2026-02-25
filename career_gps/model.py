@@ -54,6 +54,25 @@ Be motivating, realistic, and tailor advice to the Indian job market (Mumbai, Be
         })
 
         if response.status_code != 200:
-            raise ValueError(f"Gemini API error: {response.text}")
+            raise ValueError(f"Gemini API error {response.status_code}: {response.text}")
 
-        return response.json()["candidates"][0]["content"]["parts"][0]["text"]
+        data = response.json()
+
+        # Check for blocked response
+        if "candidates" not in data or len(data["candidates"]) == 0:
+            raise ValueError(f"No candidates in response: {data}")
+
+        candidate = data["candidates"][0]
+
+        # Check finish reason
+        finish_reason = candidate.get("finishReason", "")
+        if finish_reason == "SAFETY":
+            raise ValueError("Response blocked by Gemini safety filters")
+
+        if "content" not in candidate:
+            raise ValueError(f"No content in candidate: {candidate}")
+
+        if "parts" not in candidate["content"]:
+            raise ValueError(f"No parts in content: {candidate['content']}")
+
+        return candidate["content"]["parts"][0]["text"]
