@@ -5,7 +5,6 @@ from career_gps.model import CareerPathModel
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from datetime import datetime
-from mangum import Mangum
 import os
 
 load_dotenv()
@@ -61,6 +60,3 @@ async def get_history(limit: int = 10):
 @app.get("/health")
 def health():
     return {"status": "ok", "message": "Career GPS Backend Running 🚀"}
-
-
-handler = Mangum(app)
