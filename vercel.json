@@ -1,7 +1,4 @@
 {
   "builds": [{ "src": "main.py", "use": "@vercel/python" }],
-  "routes": [{ "src": "/(.*)", "dest": "main.py" }],
-  "env": {
-    "PYTHONPATH": "/var/task"
-  }
+  "routes": [{ "src": "/(.*)", "dest": "main.py" }]
 }
