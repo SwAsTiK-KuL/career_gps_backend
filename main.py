@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from datetime import datetime
 import os
+import ssl
+import requests
 
 load_dotenv()
 
@@ -21,7 +23,14 @@ app.add_middleware(
 
 # ── MongoDB setup (sync for Vercel) ──
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-mongo_client = MongoClient(MONGO_URI)
+mongo_client = MongoClient(
+    MONGO_URI,
+    tls=True,
+    tlsAllowInvalidCertificates=True,
+    tlsAllowInvalidHostnames=True,
+    ssl_cert_reqs=ssl.CERT_NONE,
+    serverSelectionTimeoutMS=5000
+)
 db = mongo_client["career_gps"]
 collection = db["roadmap_logs"]
 
