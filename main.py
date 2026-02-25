@@ -27,8 +27,6 @@ mongo_client = MongoClient(
     MONGO_URI,
     tls=True,
     tlsAllowInvalidCertificates=True,
-    tlsAllowInvalidHostnames=True,
-    ssl_cert_reqs=ssl.CERT_NONE,
     serverSelectionTimeoutMS=5000
 )
 db = mongo_client["career_gps"]
