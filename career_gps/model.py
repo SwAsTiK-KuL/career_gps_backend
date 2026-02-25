@@ -1,22 +1,17 @@
 import os
+import requests
 from pathlib import Path
 from dotenv import load_dotenv
-from google import genai
 
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
 class CareerPathModel:
     def __init__(self, model: str = "gemini-2.5-flash"):
-        api_key = os.getenv("GEMINI_API_KEY")
-        if not api_key:
+        self.api_key = os.getenv("GEMINI_API_KEY")
+        if not self.api_key:
             raise ValueError("❌ GEMINI_API_KEY not found in .env file")
-        try:
-            self.client = genai.Client(api_key=api_key)
-            print(f"✅ Connected to Gemini ({model}) — All set!")
-        except Exception as e:
-            raise ValueError(f"❌ Connection failed: {e}\n"
-                             "Check your .env has GEMINI_API_KEY=your-key")
         self.model_name = model
+        print(f"✅ Connected to Gemini ({model}) — All set!")
 
     def generate(self, user_skills: list, job_description: str, designation: str = "") -> str:
         skills_str = ", ".join(user_skills) if user_skills else "None provided"
@@ -52,8 +47,13 @@ Create a personalized **Career GPS Roadmap** in clean Markdown format:
 
 Be motivating, realistic, and tailor advice to the Indian job market (Mumbai, Bengaluru startups, TCS, Infosys, Zomato, Flipkart, etc.)."""
 
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=prompt
-        )
-        return response.text
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model_name}:generateContent?key={self.api_key}"
+
+        response = requests.post(url, json={
+            "contents": [{"parts": [{"text": prompt}]}]
+        })
+
+        if response.status_code != 200:
+            raise ValueError(f"Gemini API error: {response.text}")
+
+        return response.json()["candidates"][0]["content"]["parts"][0]["text"]
