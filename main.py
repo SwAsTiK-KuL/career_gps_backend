@@ -5,6 +5,7 @@ from career_gps.model import CareerPathModel
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from datetime import datetime
+from mangum import Mangum
 import os
 
 load_dotenv()
